@@ -23,12 +23,15 @@ export default class Form {
    * Make GET request
    *
    * @param {string} url
+   * @param {string} params
    * @param {function} successCallback
    * @param {function} errorCallback
    * @returns {Form}
    */
-  get(url, successCallback, errorCallback) {
-    this.submit('get', url).then(data => {
+  get(url, params = {}, successCallback = null, errorCallback = null) {
+    params = { params };
+
+    this.submit('get', url, params).then(data => {
       for (let field in data) {
         this[field] = data[field];
       }
@@ -118,11 +121,15 @@ export default class Form {
    * @param url
    * @returns {Promise<any>}
    */
-  submit(requestType, url) {
-    this._processing = true;
+  submit(requestType, url, params = null) {
+    if (!params) {
+      params = this.data();
+    }
 
+    console.log(params);
+    this._processing = true;
     return new Promise((resolve, reject) => {
-      axios[requestType](url, this.data())
+      axios[requestType](url, params)
         .then(response => {
           this.onSuccess(response.data);
 
