@@ -16,6 +16,7 @@ export default class Form {
     }
 
     this.errors = new Errors();
+    this._processing = false;
   }
 
   /**
@@ -116,12 +117,15 @@ export default class Form {
    * @returns {Promise<any>}
    */
   submit(requestType, url) {
+    this._processing = true;
+
     return new Promise((resolve, reject) => {
       axios[requestType](url, this.data())
         .then(response => {
           this.onSuccess(response.data);
 
           resolve(response.data);
+          this._processing = false;
         })
         .catch(error => {
           if(error.response.status === 422) {
@@ -129,6 +133,7 @@ export default class Form {
           }
 
           reject(error.response);
+          this._processing = false;
         });
     });
   }
