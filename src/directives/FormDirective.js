@@ -19,14 +19,28 @@ function clearValidationErrorAfterChangeInput(form, event) {
  * @param {object} errors
  */
 function injectErrorsObjectIntoComponent(Vue, componentName, vnode, errors) {
-  if (vnode.componentOptions.tag === componentName) {
+  if (vnode.hasOwnProperty('$vnode')) {
+    vnode = vnode.$vnode;
+  }
+
+  if (!vnode.tag) {
+    return;
+  }
+
+  //Inject errors object into validation directive
+  if (vnode.componentOptions && (vnode.componentOptions.tag === componentName)) {
     Vue.set(vnode.componentInstance.$data, 'injectedErrors', errors);
 
     return;
   }
 
-  vnode.componentInstance.$children.map(child => {
-    injectErrorsObjectIntoComponent(Vue, componentName, child.$vnode, errors);
+  let children = vnode.componentInstance ? vnode.componentInstance.$children : vnode.children;
+  if (!children) {
+    return;
+  }
+
+  children.map(child => {
+    injectErrorsObjectIntoComponent(Vue, componentName, child, errors);
   });
 }
 
@@ -44,7 +58,7 @@ export default {
           el.addEventListener('change', clearValidationErrorAfterChangeInput.bind(null, form));
         }
 
-        vnode.children.filter(child => child.componentInstance).forEach(child => {
+        vnode.children.forEach(child => {
           injectErrorsObjectIntoComponent(Vue, config.validationMessageComponentName, child, form.errors);
         });
       }
