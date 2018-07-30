@@ -28,7 +28,7 @@ export default class Form {
    */
   get(url, successCallback, errorCallback) {
     axios.get(url).then(response => {
-      for (let field in this.data()) {
+      for (let field in response.data) {
         this[field] = response.data[field];
       }
 
