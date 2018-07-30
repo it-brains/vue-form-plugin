@@ -28,16 +28,18 @@ export default class Form {
    * @returns {Form}
    */
   get(url, successCallback, errorCallback) {
-    axios.get(url).then(response => {
-      for (let field in response.data) {
-        this[field] = response.data[field];
+    this.submit('get', url).then(data => {
+      for (let field in data) {
+        this[field] = data[field];
       }
 
       if (successCallback) {
-        successCallback(response);
+        successCallback(data);
       }
     }).catch(error => {
-      errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     });
 
     return this;
