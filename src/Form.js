@@ -126,7 +126,6 @@ export default class Form {
       params = this.data();
     }
 
-    console.log(params);
     this._processing = true;
     return new Promise((resolve, reject) => {
       axios[requestType](url, params)
