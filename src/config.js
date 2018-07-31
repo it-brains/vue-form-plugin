@@ -1,7 +1,3 @@
-/**
- *
- *
- */
 const config = {
   /**
    * Name of form class
@@ -22,6 +18,11 @@ const config = {
    * Clear validation message after appropriate input was changed
    */
   clearValidationMessageWithInputChange: true,
+
+  /**
+   * Key of validation messages returned from the server
+   */
+  validationMessagesResponseKey: '',
 };
 
 

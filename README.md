@@ -34,6 +34,7 @@ The configuration object can contain the following options:
 Default value is `form`
 - `clearValidationMessageWithInputChange` - determines if validation message should be cleaned after changing of 
 appropriate input, related with this error. Default value is `true`
+- `validationMessagesResponseKey` - key of validation messages in response object. Default is empty (uses root data object)
 
 For using of the wrapper just create instance of `Form`(can be changed with `formClassName` option) class with needed fields:
 ```html

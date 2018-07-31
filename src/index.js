@@ -19,7 +19,7 @@ function registerDirective(Vue) {
 
 export default {
   install (Vue, customConfig = {}) {
-    configData = config.get(customConfig);
+    window._vueFormPluginConfig = configData = config.get(customConfig);
 
     registerForm();
 

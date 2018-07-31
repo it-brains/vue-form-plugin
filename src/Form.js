@@ -177,11 +177,16 @@ export default class Form {
           this._processing = false;
         })
         .catch(error => {
-          if(error.response.status === 422) {
-            this.onFail(error.response.data.errors);
+          const response = error.response,
+            errorsKey = _vueFormPluginConfig.validationMessagesResponseKey;
+          
+          if(response.status === 422) {
+            let errors = errorsKey ? response.data[errorsKey] : response.data;
+
+            this.onFail(errors);
           }
 
-          reject(error.response);
+          reject(response);
           this._processing = false;
         });
     });
