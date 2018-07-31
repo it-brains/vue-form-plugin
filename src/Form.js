@@ -82,7 +82,7 @@ export default class Form {
    * @param {object} headers
    * @returns {Promise<any>}
    */
-  post(url, headers) {
+  post(url, headers = {}) {
     return this.request('post', url, {headers});
   }
 
@@ -93,7 +93,7 @@ export default class Form {
    * @param {object} headers
    * @returns {Promise<any>}
    */
-  put(url, headers) {
+  put(url, headers = {}) {
     return this.request('put', url, {headers});
   }
 
@@ -104,7 +104,7 @@ export default class Form {
    * @param {object} headers
    * @returns {Promise<any>}
    */
-  patch(url, headers) {
+  patch(url, headers = {}) {
     return this.request('patch', url, {headers});
   }
 
@@ -115,7 +115,7 @@ export default class Form {
    * @param {object} headers
    * @returns {Promise<any>}
    */
-  delete(url, headers) {
+  delete(url, headers = {}) {
     return this.request('delete', url, {headers});
   }
 
@@ -150,6 +150,7 @@ export default class Form {
    * @returns {Promise<any>}
    */
   request(requestType, url, config = {}) {
+    console.log(config);
     let requestData = [url];
     if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
       requestData.push(this.data());
@@ -166,6 +167,7 @@ export default class Form {
       requestData = this.transformData(...requestData);
     }
 
+    console.log(options);
     this._processing = true;
     return new Promise((resolve, reject) => {
       axios[requestType](...requestData)
