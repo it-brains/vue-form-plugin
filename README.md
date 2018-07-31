@@ -32,7 +32,26 @@ The configuration object can contain the following options:
 - `clearValidationMessageWithInputChange` - determines if validation message should be cleaned after changing of appropriate input, related with this error. 
 Default value is `true`
 
-For using of the wrapper just create instance of `Form`(can be changed with `formClassName` option) class with needed fields. 
+For using of the wrapper just create instance of `Form`(can be changed with `formClassName` option) class with needed fields:
+```html
+<template>
+  .....
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        form: new Form({
+          name: '',
+          city: '',
+          state: '',
+        }),
+      }
+    }
+  }
+</script>
+```
 
 If you want to display validation messages from server:
 1. Add `v-form` (can be changed with `formDirectiveName` option) directive to the wrapper of all your inputs which are use `Form` instance. 
@@ -104,17 +123,17 @@ Form class ships with the next methods:
 - `delete(url)` - makes DELETE request to the server. Returns promise
 
 Params:
-- `url` - URL address for the request
-- `params` - optional. GET params for the requests
+- `url` - string with URL address for the request
+- `params` - optional. JS object with GET params for the requests
 - `successCallback` - optional. Callback function which will be called after success request
 - `errorCallback` - optional. Callback function which will be called after failed request
 
 Form class includes instance of `Errors` class (as an `errors` property) which contains returned validation messages. Methods of 
 errors class:
-- `has(field)` - determines if there is an error by given field
+- `has(field)` - determines if there is an error by given field name
 - `any()` - determines if there is any error
-- `get(field)` - returns the first error by given field
-- `clear([field])` - clears ALL errors if 'field' did not passed or only specific errors by given field if it was
+- `get(field)` - returns the first error by given field name
+- `clear([field])` - clears ALL errors if 'field' did not passed or only specific errors by given field name if it was
 
 Form class contains internal property `_processing ` which can be used for determines if HTTP request is in progress.
 
