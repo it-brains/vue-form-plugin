@@ -136,7 +136,15 @@ export default class Form {
 
     let formData = new FormData();
     for (let property in data) {
-      formData.append(property, data[property]);
+      if (!Array.isArray(data[property])) {
+        formData.append(property, data[property]);
+
+        continue;
+      }
+
+      for (let i = 0; i < data[property].length; i++) {
+        formData.append(property + '[]', data[property][i]);
+      }
     }
 
     return [url, formData, options]
@@ -231,7 +239,7 @@ export default class Form {
     }
 
     if (targetNode.multiple) {
-      Vue.set(this, field, Array.from(targetNode.files)); //TODO: fix sending multiple files
+      Vue.set(this, field, Array.from(targetNode.files));
     } else {
       Vue.set(this, field, targetNode.files[0]);
     }
