@@ -115,16 +115,24 @@ Example:
 ```
 
 ## Form class
+The title of the class can be overridden with `formClassName` option of plugin.
+
+Constructor of the class takes two arguments:
+- `data` - JS object with needed fields
+- `headers` - optional. JS object with HTTP headers which will be passed with every HTTP request
+
 Form class ships with the next methods:
-- `get(url[, params, successCallback, errorCallback])` - makes GET request to the server. Return current instance of the class
-- `post(url)` - makes POST request to the server. Returns promise
-- `put(url)` - makes PUT request to the server. Returns promise
-- `patch(url)` - makes PATCH request to the server. Returns promise
-- `delete(url)` - makes DELETE request to the server. Returns promise
+- `get(url[, params, headers, successCallback, errorCallback])` - makes GET request to the server. Return current instance of the class
+- `post(url[, headers])` - makes POST request to the server. Returns promise
+- `put(url[, headers])` - makes PUT request to the server. Returns promise
+- `patch(url[, headers])` - makes PATCH request to the server. Returns promise
+- `delete(url[, headers])` - makes DELETE request to the server. Returns promise
 
 Params:
 - `url` - string with URL address for the request
 - `params` - optional. JS object with GET params for the requests
+- `headers` - optional. JS object with HTTP headers which will be passed with current request. If this object has the same HTTP headers as
+headers which were passed with constructor of the class, constructor's headers will be overridden
 - `successCallback` - optional. Callback function which will be called after success request
 - `errorCallback` - optional. Callback function which will be called after failed request
 
