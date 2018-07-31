@@ -23,6 +23,11 @@ const config = {
    * Key of validation messages returned from the server
    */
   validationMessagesResponseKey: '',
+
+  /**
+   * HTTP response codes of validation error
+   */
+  validationErrorStatusCodes: 422,
 };
 
 

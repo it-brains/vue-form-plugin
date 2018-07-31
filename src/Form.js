@@ -170,26 +170,43 @@ export default class Form {
     this._processing = true;
     return new Promise((resolve, reject) => {
       axios[requestType](...requestData)
-        .then(response => {
-          this.onSuccess(response.data);
-
-          resolve(response.data);
-          this._processing = false;
-        })
-        .catch(error => {
-          const response = error.response,
-            errorsKey = _vueFormPluginConfig.validationMessagesResponseKey;
-          
-          if(response.status === 422) {
-            let errors = errorsKey ? response.data[errorsKey] : response.data;
-
-            this.onFail(errors);
-          }
-
-          reject(response);
-          this._processing = false;
-        });
+        .then(this.requestSuccessHandler.bind(this, resolve))
+        .catch(this.requestErrorHandler.bind(this, reject));
     });
+  }
+
+  /**
+   * @param {function} resolve
+   * @param {object} response
+   */
+  requestSuccessHandler(resolve, response) {
+    this.onSuccess(response.data);
+
+    resolve(response.data);
+    this._processing = false;
+  }
+
+  /**
+   * @param {function} reject
+   * @param {object} error
+   */
+  requestErrorHandler(reject, error) {
+    const response = error.response,
+      errorsKey = _vueFormPluginConfig.validationMessagesResponseKey;
+
+    let validationErrorCodes = _vueFormPluginConfig.validationErrorStatusCodes;
+    if (!Array.isArray(validationErrorCodes)) {
+      validationErrorCodes = [validationErrorCodes];
+    }
+
+    if(validationErrorCodes.indexOf(response.status) !== -1) {
+      let errors = errorsKey ? response.data[errorsKey] : response.data;
+
+      this.onFail(errors);
+    }
+
+    reject(response);
+    this._processing = false;
   }
 
   /**
