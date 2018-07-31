@@ -152,7 +152,7 @@ Methods of errors class:
 
 Form class contains internal property `_processing ` which can be used for determines if HTTP request is in progress.
 
-##Working with files
+## Working with files
 As you may know there is no ability to assign `v-model` to an file input (because this input is read only). 
 You can use `setFileField` event handler method of form class to simplify the process of setting selected files to 
 property of form class instance. This method takes the following arguments:
