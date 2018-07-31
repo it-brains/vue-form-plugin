@@ -1,5 +1,6 @@
 import Errors from './Errors';
-import axios from 'axios'
+import axios from 'axios';
+import Vue from 'vue';
 
 export default class Form {
 
@@ -150,7 +151,6 @@ export default class Form {
    * @returns {Promise<any>}
    */
   request(requestType, url, config = {}) {
-    console.log(config);
     let requestData = [url];
     if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
       requestData.push(this.data());
@@ -167,7 +167,6 @@ export default class Form {
       requestData = this.transformData(...requestData);
     }
 
-    console.log(options);
     this._processing = true;
     return new Promise((resolve, reject) => {
       axios[requestType](...requestData)
@@ -186,6 +185,38 @@ export default class Form {
           this._processing = false;
         });
     });
+  }
+
+  /**
+   * Set data to form instance
+   *
+   * @param {string} field
+   * @param {object|null} event
+   * @param {object|null} value
+   * @param {function|null} callback
+   */
+  setFileField(field, event = null, value = null, callback = null) {
+    //Function was called manually
+    if (!event) {
+      Vue.set(this, field, value);
+
+      return;
+    }
+
+    let targetNode = event.target;
+    if(targetNode.type !== 'file') {
+      return;
+    }
+
+    if (targetNode.multiple) {
+      Vue.set(this, field, Array.from(targetNode.files)); //TODO: fix sending multiple files
+    } else {
+      Vue.set(this, field, targetNode.files[0]);
+    }
+
+    if (callback) {
+      callback(field, event);
+    }
   }
 
   /**
