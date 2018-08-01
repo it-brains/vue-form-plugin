@@ -81,6 +81,32 @@ describe('Form', () => {
     expect(form.errors.any()).toBe(false);
   });
 
+  it('clears validation errors within success callback', () => {
+    form.errors.record({
+      field1: 'Error1',
+      field2: 'Error2'
+    });
+
+    expect(form.errors.any()).toBe(true);
+
+    form.onSuccess();
+    expect(form.errors.any()).toBe(false);
+  });
+
+  it('records validation errors within onFail callback', () => {
+    const errors = {
+      filed1: 'Error1',
+      filed2: 'Error2'
+    }
+
+    expect(form.errors.any()).toBe(false);
+
+    form.onFail(errors);
+    for(let property in errors) {
+      expect(form.errors.get(property)).toBe(errors[property]);
+    }
+  });
+
   //TODO: get request
   //TODO: post request
   //TODO: PUT request
@@ -91,6 +117,4 @@ describe('Form', () => {
   //TODO: requestSuccessHandler ???
   //TODO: requestErrorHandler ???
   //TODO: setFileField
-  //TODO: onSuccess
-  //TODO: onFail
 });

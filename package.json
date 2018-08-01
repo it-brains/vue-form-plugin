@@ -11,6 +11,7 @@
     "expect": "^23.4.0",
     "mocha": "^5.2.0",
     "mocha-webpack": "^1.1.0",
+    "moxios": "^0.4.0",
     "vue": "^2.5.13",
     "vue-loader": "^13.7.1",
     "vue-template-compiler": "^2.5.16",
@@ -22,7 +23,6 @@
     "watch": "webpack --config=webpack.config.dev.js src dist/index.js --watch",
     "test": "mocha-webpack --webpack-config webpack.config.dev.js test/*.spec.js",
     "watch-test": "mocha-webpack --webpack-config webpack.config.dev.js --watch test/*.spec.js"
-
   },
   "repository": {
     "type": "git",
