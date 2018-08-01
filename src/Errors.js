@@ -46,7 +46,7 @@ export default class Errors {
    *
    * @param {object} errors
    */
-  record(errors) {
+  _record(errors) {
     this.errors = errors;
   }
 

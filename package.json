@@ -1,6 +1,6 @@
 {
   "name": "vuejs-form-plugin",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Simple wrapper for HTTP requests",
   "main": "dist/index.js",
   "devDependencies": {
@@ -22,19 +22,19 @@
   "scripts": {
     "build": "webpack --config=webpack.config.build.js src dist/index.js",
     "watch": "webpack --config=webpack.config.dev.js src dist/index.js --watch",
-    "test": "mocha-webpack --webpack-config webpack.config.dev.js test/*.spec.js",
-    "test-watch": "mocha-webpack --webpack-config webpack.config.dev.js --watch test/*.spec.js"
+    "test": "mocha-webpack --webpack-config webpack.config.dev.js --require test/setup.js test/*.spec.js",
+    "test-watch": "mocha-webpack --webpack-config webpack.config.dev.js --require test/setup.js --watch test/*.spec.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VasiliyGryaznoy/vue-form-plugin.git"
+    "url": "git+https://github.com/it-brains/vue-form-plugin.git"
   },
-  "author": "Vasiliy Gryaznoy",
+  "author": "IT Brains",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/VasiliyGryaznoy/vue-form-plugin/issues"
+    "url": "https://github.com/it-brains/vue-form-plugin/issues"
   },
-  "homepage": "https://github.com/VasiliyGryaznoy/vue-form-plugin",
+  "homepage": "https://github.com/it-brains/vue-form-plugin",
   "keywords": [
     "VueJS",
     "HTTP",

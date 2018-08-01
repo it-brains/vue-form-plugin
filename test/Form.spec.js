@@ -2,16 +2,21 @@ import Form from '../src/Form';
 import Errors from '../src/Errors';
 import expect from 'expect';
 import moxios from 'moxios';
-import axios from 'axios';
+import config from '../src/config';
+import Vue from 'vue';
 
+//TODO: test HTTP headers and GET params
+//TODO: test calling callbacks
 describe('Form', () => {
   let formData;
   const headers = {
+    'Content-Type': 'multipart/form-data',
     'Accept-Charset': 'Accept-Charset: utf-8',
     'Cache-Control': 'Cache-Control: no-cache',
   };
 
   let form;
+  window._vueFormPluginConfig = config.get({});
 
   beforeEach(() => {
     moxios.install();
@@ -60,75 +65,31 @@ describe('Form', () => {
     });
   });
 
-  it('returns data passed trough constructor', () => {
-    expect(form.data()).toEqual(formData);
-  });
-
   it('returns empty object if data was not passed trough constructor', () => {
     let newForm = new Form();
 
-    expect(newForm.data()).toEqual({});
+    expect(newForm._data()).toEqual({});
   });
 
   it('resets all instance properties passed via object through constructor and errors', () => {
-    expect(form.data()).toEqual(formData);
+    expect(form._data()).toEqual(formData);
 
     for(let property in formData) {
       formData[property] = '';
     }
 
-    form.errors.record({
+    form.errors._record({
       field1: 'Error1',
       field2: ['Error', 'Error2'],
     });
 
     form.reset();
 
-    expect(form.data()).toEqual(formData);
+    expect(form._data()).toEqual(formData);
     expect(form.errors.any()).toBe(false);
   });
 
-  it('clears validation errors within success callback', () => {
-    form.errors.record({
-      field1: 'Error1',
-      field2: 'Error2'
-    });
-
-    expect(form.errors.any()).toBe(true);
-
-    form.onSuccess();
-    expect(form.errors.any()).toBe(false);
-  });
-
-  it('records validation errors within onFail callback', () => {
-    const errors = {
-      filed1: 'Error1',
-      filed2: 'Error2'
-    }
-
-    expect(form.errors.any()).toBe(false);
-
-    form.onFail(errors);
-    for(let property in errors) {
-      expect(form.errors.get(property)).toBe(errors[property]);
-    }
-  });
-
-  it('can send post request', (done) => {
-    moxios.stubRequest('/users', {
-      status: 200,
-    });
-
-
-    moxios.wait(() => {
-      //TODO: test
-      done();
-    });
-
-    form.post('/users');
-  });
-
-  it.only('can send get request', (done) => {
+  it('can send get request', (done) => {
     let userData = {
       id: 1,
       name: 'John Connor',
@@ -152,20 +113,134 @@ describe('Form', () => {
   });
 
   let moxiosStubRequest = (url, status, data) => {
-    moxios.stubRequest('/user', {
-      status: 200,
+    moxios.stubRequest(url, {
+      status: status,
       response: data
     });
   }
 
-  //TODO: get request
-  //TODO: post request
-  //TODO: PUT request
-  //TODO: PATCH request
-  //TODO: delete request
-  //TODO: transformData
-  //TODO: request
-  //TODO: requestSuccessHandler ???
-  //TODO: requestErrorHandler ???
-  //TODO: setFileField
+  let testSendFailedRequestAndHandlerValidationErrors = (requestType, done) => {
+    let validationErrors = {
+      name: 'Error1',
+      address: 'Error2',
+      city: ['Error', 'Error3'],
+      state: 'error4',
+    }
+
+    expect(form._processing).toBe(false);
+    expect(form.errors.any()).toBe(false);
+    moxiosStubRequest('/users', window._vueFormPluginConfig.validationErrorStatusCodes, validationErrors);
+
+    form[requestType]('/users').catch(() => {});
+    expect(form._processing).toBe(true);
+    moxios.wait(() => {
+      for(let property in validationErrors) {
+        expect(form.errors.errors[property]).toEqual(validationErrors[property]);
+      }
+
+      expect(form._processing).toBe(false);
+      done();
+    });
+  };
+
+  it('can send post request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('post', done);
+  });
+
+  it('can send put request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('put', done);
+  });
+
+  it('can send patch request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('patch', done);
+  });
+
+  it('can send delete request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('delete', done);
+  });
+
+  let testSendSuccessRequestAndClearErrors = (requestType, done) => {
+    let validationErrors = {
+      name: 'Error1',
+      address: 'Error2',
+      city: ['Error', 'Error3'],
+      state: 'error4',
+    }
+
+    expect(form._processing).toBe(false);
+    form.errors._record(validationErrors);
+    expect(form.errors.any()).toBe(true);
+
+    moxiosStubRequest('/users', 200, {});
+
+    form[requestType]('/users').catch(() => {});
+    expect(form._processing).toBe(true);
+    moxios.wait(() => {
+      expect(form.errors.any()).toBe(false);
+      expect(form._processing).toBe(false);
+
+      done();
+    });
+  };
+
+  it('can send post request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('post', done);
+  });
+
+  it('can send put request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('put', done);
+  });
+
+  it('can send patch request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('patch', done);
+  });
+
+  it('can send delete request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('delete', done);
+  });
+
+  it('can set files property', () => {
+    expect(form.file).toBe(undefined);
+
+    const fileData = {size: 101020, field: '....'};
+    const eventObject = {
+      target: {
+        type: 'file',
+        multiple: false,
+        files: [fileData]
+      }
+    }
+
+    form.setFileField('file', eventObject);
+    expect(form.file).toEqual(fileData);
+  });
+
+  it('can set files property with multiple input', () => {
+    expect(form.files).toBe(undefined);
+
+    const filesData = [
+      {size: 101020, field: '....'},
+      {size: 101021, field: '........'}
+    ];
+    const eventObject = {
+      target: {
+        type: 'file',
+        multiple: true,
+        files: filesData
+      }
+    }
+
+    form.setFileField('files', eventObject);
+    expect(form.files).toEqual(filesData);
+  });
+
+  it('can clear files property', () => {
+    const fileData = {size: 101020, field: '....'};
+
+    Vue.set(form, 'file', fileData);
+    expect(form.file).toEqual(fileData);
+
+    form.setFileField('file', null, null);
+    expect(form.file).toEqual(null);
+  });
 });
