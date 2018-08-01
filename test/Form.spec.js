@@ -114,19 +114,49 @@ describe('Form', () => {
     }
   });
 
-  it.only('can send post request', (done) => {
+  it('can send post request', (done) => {
     moxios.stubRequest('/users', {
       status: 200,
     });
 
 
-    moxios.wait((a, b, c, d) => {
+    moxios.wait(() => {
       //TODO: test
       done();
     });
 
     form.post('/users');
   });
+
+  it.only('can send get request', (done) => {
+    let userData = {
+      id: 1,
+      name: 'John Connor',
+      address: '321 Avenue',
+      city: 'Los Angeles',
+      state: 'CA',
+      age: 31,
+    };
+
+    moxiosStubRequest('/user', 200, userData);
+    form.get('/user');
+
+    moxios.wait(() => {
+      for(let property in userData) {
+        expect(form[property]).toBe(userData[property]);
+      }
+
+      done();
+    });
+
+  });
+
+  let moxiosStubRequest = (url, status, data) => {
+    moxios.stubRequest('/user', {
+      status: 200,
+      response: data
+    });
+  }
 
   //TODO: get request
   //TODO: post request
