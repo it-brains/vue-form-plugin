@@ -33,7 +33,7 @@ export default class Form {
    * @returns {Form}
    */
   get(url, params = {}, headers = {}, successCallback = null, errorCallback = null) {
-    this.request('get', url, {params, headers}).then(data => {
+    this._request('get', url, {params, headers}).then(data => {
       for (let field in data) {
         this[field] = data[field];
       }
@@ -84,7 +84,7 @@ export default class Form {
    * @returns {Promise<any>}
    */
   post(url, headers = {}) {
-    return this.request('post', url, {headers});
+    return this._request('post', url, {headers});
   }
 
   /**
@@ -95,7 +95,7 @@ export default class Form {
    * @returns {Promise<any>}
    */
   put(url, headers = {}) {
-    return this.request('put', url, {headers});
+    return this._request('put', url, {headers});
   }
 
   /**
@@ -106,7 +106,7 @@ export default class Form {
    * @returns {Promise<any>}
    */
   patch(url, headers = {}) {
-    return this.request('patch', url, {headers});
+    return this._request('patch', url, {headers});
   }
 
   /**
@@ -117,7 +117,7 @@ export default class Form {
    * @returns {Promise<any>}
    */
   delete(url, headers = {}) {
-    return this.request('delete', url, {headers});
+    return this._request('delete', url, {headers});
   }
 
   /**
@@ -127,7 +127,7 @@ export default class Form {
    * @param {object} options
    * @returns {*[]}
    */
-  transformData(url, data, options) {
+  _transformData(url, data, options) {
     const headers = options.headers;
 
     if (!headers || !headers.hasOwnProperty('Content-Type') || (headers['Content-Type'] !== 'multipart/form-data')) {
@@ -158,7 +158,7 @@ export default class Form {
    * @param {object} config
    * @returns {Promise<any>}
    */
-  request(requestType, url, config = {}) {
+  _request(requestType, url, config = {}) {
     let requestData = [url];
     if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
       requestData.push(this.data());
@@ -172,14 +172,14 @@ export default class Form {
 
     requestData.push(options);
     if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
-      requestData = this.transformData(...requestData);
+      requestData = this._transformData(...requestData);
     }
 
     this._processing = true;
     return new Promise((resolve, reject) => {
       axios[requestType](...requestData)
-        .then(this.requestSuccessHandler.bind(this, resolve))
-        .catch(this.requestErrorHandler.bind(this, reject));
+        .then(this._requestSuccessHandler.bind(this, resolve))
+        .catch(this._requestErrorHandler.bind(this, reject));
     });
   }
 
@@ -187,8 +187,8 @@ export default class Form {
    * @param {function} resolve
    * @param {object} response
    */
-  requestSuccessHandler(resolve, response) {
-    this.onSuccess(response.data);
+  _requestSuccessHandler(resolve, response) {
+    this._onSuccess(response.data);
 
     resolve(response.data);
     this._processing = false;
@@ -198,7 +198,7 @@ export default class Form {
    * @param {function} reject
    * @param {object} error
    */
-  requestErrorHandler(reject, error) {
+  _requestErrorHandler(reject, error) {
     const response = error.response,
       errorsKey = window._vueFormPluginConfig.validationMessagesResponseKey;
 
@@ -210,7 +210,7 @@ export default class Form {
     if(validationErrorCodes.indexOf(response.status) !== -1) {
       let errors = errorsKey ? response.data[errorsKey] : response.data;
 
-      this.onFail(errors);
+      this._onFail(errors);
     }
 
     reject(response);
@@ -252,14 +252,14 @@ export default class Form {
   /**
    * Success callback
    */
-  onSuccess() {
+  _onSuccess() {
     this.errors.clear();
   }
 
   /**
    * Error callback
    */
-  onFail(errors) {
-    this.errors.record(errors);
+  _onFail(errors) {
+    this.errors._record(errors);
   }
 }

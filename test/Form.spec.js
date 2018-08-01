@@ -82,7 +82,7 @@ describe('Form', () => {
       formData[property] = '';
     }
 
-    form.errors.record({
+    form.errors._record({
       field1: 'Error1',
       field2: ['Error', 'Error2'],
     });
@@ -91,32 +91,6 @@ describe('Form', () => {
 
     expect(form.data()).toEqual(formData);
     expect(form.errors.any()).toBe(false);
-  });
-
-  it('clears validation errors within success callback', () => {
-    form.errors.record({
-      field1: 'Error1',
-      field2: 'Error2'
-    });
-
-    expect(form.errors.any()).toBe(true);
-
-    form.onSuccess();
-    expect(form.errors.any()).toBe(false);
-  });
-
-  it('records validation errors within onFail callback', () => {
-    const errors = {
-      filed1: 'Error1',
-      filed2: 'Error2'
-    }
-
-    expect(form.errors.any()).toBe(false);
-
-    form.onFail(errors);
-    for(let property in errors) {
-      expect(form.errors.get(property)).toBe(errors[property]);
-    }
   });
 
   it('can send get request', (done) => {
@@ -198,7 +172,7 @@ describe('Form', () => {
     }
 
     expect(form._processing).toBe(false);
-    form.errors.record(validationErrors);
+    form.errors._record(validationErrors);
     expect(form.errors.any()).toBe(true);
 
     moxiosStubRequest('/users', 200, {});
@@ -273,7 +247,4 @@ describe('Form', () => {
     form.setFileField('file', null, null);
     expect(form.file).toEqual(null);
   });
-
-  //TODO: transformData
-  //TODO: request
 });

@@ -29,19 +29,6 @@ describe('Errors', () => {
     expect(errorsInstance.any()).toBe(false);
   });
 
-  it('records given values to errors property', () => {
-    expect(errorsInstance.errors).toEqual({});
-
-    let errors = {
-      field1: 'error',
-      field2: ['error', 'error2'],
-      field3: 'Error message'
-    };
-
-    errorsInstance.record(errors);
-    expect(errorsInstance.errors).toEqual(errors);
-  });
-
   it('returns null if there is no error by given field name', () => {
     expect(errorsInstance.get('field_name')).toBe(null);
   });
