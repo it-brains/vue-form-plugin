@@ -32,7 +32,7 @@ const config = {
 
 
 export default {
-  get(customConfig) {
+  get(customConfig = {}) {
     return {
       ...config,
       ...customConfig
