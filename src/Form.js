@@ -26,17 +26,20 @@ export default class Form {
    * Make GET request
    *
    * @param {string} url
+   * @param {string} transformers
    * @param {string} params
    * @param {string} headers
    * @param {function} successCallback
    * @param {function} errorCallback
    * @returns {Form}
    */
-  get(url, params = {}, headers = {}, successCallback = null, errorCallback = null) {
+  get(url, transformers = {}, params = {}, headers = {}, successCallback = null, errorCallback = null) {
     this.request('get', url, {params, headers}).then(data => {
       for (let field in data) {
         this[field] = data[field];
       }
+
+      this.applyTransformers(transformers, data);
 
       if (successCallback) {
         successCallback(data);
@@ -48,6 +51,37 @@ export default class Form {
     });
 
     return this;
+  }
+
+  /**
+   *
+   * @param {object} transformers
+   * @param {object} data
+   */
+  applyTransformers(transformers, data) {
+    for (let prop in transformers) {
+      if (!data.hasOwnProperty(prop)) {
+        continue;
+      }
+
+      let {field, property, func} = transformers[prop],
+        tData = data[prop];
+
+      if (!field) {
+        field = prop;
+      }
+
+      if (!property && !func) {
+        continue;
+      }
+
+      if (!Array.isArray(tData)) {
+        this[field] = this.originalData[field] = func ? func(tData) : tData[property];
+        continue;
+      }
+
+      this[field] = this.originalData[field] = tData.map(item => (func ? func(item) : item[property]));
+    }
   }
 
   /**

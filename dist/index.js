@@ -11014,6 +11014,7 @@ var Form = function () {
    * Make GET request
    *
    * @param {string} url
+   * @param {string} transformers
    * @param {string} params
    * @param {string} headers
    * @param {function} successCallback
@@ -11025,18 +11026,21 @@ var Form = function () {
   _createClass(Form, [{
     key: 'get',
     value: function get(url) {
-      var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var transformers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var headers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
       var _this = this;
 
-      var successCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-      var errorCallback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+      var successCallback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+      var errorCallback = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
 
       this.request('get', url, { params: params, headers: headers }).then(function (data) {
         for (var field in data) {
           _this[field] = data[field];
         }
+
+        _this.applyTransformers(transformers, data);
 
         if (successCallback) {
           successCallback(data);
@@ -11051,14 +11055,62 @@ var Form = function () {
     }
 
     /**
+     *
+     * @param {object} transformers
+     * @param {object} data
+     */
+
+  }, {
+    key: 'applyTransformers',
+    value: function applyTransformers(transformers, data) {
+      var _this2 = this;
+
+      var _loop = function _loop(prop) {
+        if (!data.hasOwnProperty(prop)) {
+          return 'continue';
+        }
+
+        var _transformers$prop = transformers[prop],
+            field = _transformers$prop.field,
+            property = _transformers$prop.property,
+            func = _transformers$prop.func,
+            tData = data[prop];
+
+
+        if (!field) {
+          field = prop;
+        }
+
+        if (!property && !func) {
+          return 'continue';
+        }
+
+        if (!Array.isArray(tData)) {
+          _this2[field] = _this2.originalData[field] = func ? func(tData) : tData[property];
+          return 'continue';
+        }
+
+        _this2[field] = _this2.originalData[field] = tData.map(function (item) {
+          return func ? func(item) : item[property];
+        });
+      };
+
+      for (var prop in transformers) {
+        var _ret = _loop(prop);
+
+        if (_ret === 'continue') continue;
+      }
+    }
+
+    /**
      * Reset the form fields
      */
 
   }, {
     key: 'reset',
     value: function reset() {
-      for (var field in this.originalData) {
-        this[field] = '';
+      for (var _field in this.originalData) {
+        this[_field] = '';
       }
 
       this.errors.clear();
@@ -11075,8 +11127,8 @@ var Form = function () {
     value: function data() {
       var data = {};
 
-      for (var property in this.originalData) {
-        data[property] = this[property];
+      for (var _property in this.originalData) {
+        data[_property] = this[_property];
       }
 
       return data;
@@ -11164,15 +11216,15 @@ var Form = function () {
       }
 
       var formData = new FormData();
-      for (var property in data) {
-        if (!Array.isArray(data[property])) {
-          formData.append(property, data[property]);
+      for (var _property2 in data) {
+        if (!Array.isArray(data[_property2])) {
+          formData.append(_property2, data[_property2]);
 
           continue;
         }
 
-        for (var i = 0; i < data[property].length; i++) {
-          formData.append(property + '[]', data[property][i]);
+        for (var i = 0; i < data[_property2].length; i++) {
+          formData.append(_property2 + '[]', data[_property2][i]);
         }
       }
 
@@ -11191,7 +11243,7 @@ var Form = function () {
   }, {
     key: 'request',
     value: function request(requestType, url) {
-      var _this2 = this;
+      var _this3 = this;
 
       var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
@@ -11213,7 +11265,7 @@ var Form = function () {
 
       this._processing = true;
       return new Promise(function (resolve, reject) {
-        _axios2.default[requestType].apply(_axios2.default, _toConsumableArray(requestData)).then(_this2.requestSuccessHandler.bind(_this2, resolve)).catch(_this2.requestErrorHandler.bind(_this2, reject));
+        _axios2.default[requestType].apply(_axios2.default, _toConsumableArray(requestData)).then(_this3.requestSuccessHandler.bind(_this3, resolve)).catch(_this3.requestErrorHandler.bind(_this3, reject));
       });
     }
 
