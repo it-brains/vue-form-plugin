@@ -66,17 +66,17 @@ describe('Form', () => {
   });
 
   it('returns data passed trough constructor', () => {
-    expect(form.data()).toEqual(formData);
+    expect(form._data()).toEqual(formData);
   });
 
   it('returns empty object if data was not passed trough constructor', () => {
     let newForm = new Form();
 
-    expect(newForm.data()).toEqual({});
+    expect(newForm._data()).toEqual({});
   });
 
   it('resets all instance properties passed via object through constructor and errors', () => {
-    expect(form.data()).toEqual(formData);
+    expect(form._data()).toEqual(formData);
 
     for(let property in formData) {
       formData[property] = '';
@@ -89,7 +89,7 @@ describe('Form', () => {
 
     form.reset();
 
-    expect(form.data()).toEqual(formData);
+    expect(form._data()).toEqual(formData);
     expect(form.errors.any()).toBe(false);
   });
 

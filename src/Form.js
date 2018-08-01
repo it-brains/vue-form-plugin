@@ -66,7 +66,7 @@ export default class Form {
    *
    * @returns {object}
    */
-  data() {
+  _data() {
     let data = {};
 
     for (let property in this.originalData) {
@@ -161,7 +161,7 @@ export default class Form {
   _request(requestType, url, config = {}) {
     let requestData = [url];
     if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
-      requestData.push(this.data());
+      requestData.push(this._data());
     }
 
     let {headers = {}, ...options} = config;
