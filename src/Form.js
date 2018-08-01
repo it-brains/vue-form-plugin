@@ -200,9 +200,9 @@ export default class Form {
    */
   requestErrorHandler(reject, error) {
     const response = error.response,
-      errorsKey = _vueFormPluginConfig.validationMessagesResponseKey;
+      errorsKey = window._vueFormPluginConfig.validationMessagesResponseKey;
 
-    let validationErrorCodes = _vueFormPluginConfig.validationErrorStatusCodes;
+    let validationErrorCodes = window._vueFormPluginConfig.validationErrorStatusCodes;
     if (!Array.isArray(validationErrorCodes)) {
       validationErrorCodes = [validationErrorCodes];
     }

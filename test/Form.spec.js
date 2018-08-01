@@ -2,16 +2,19 @@ import Form from '../src/Form';
 import Errors from '../src/Errors';
 import expect from 'expect';
 import moxios from 'moxios';
-import axios from 'axios';
+import config from '../src/config';
 
+//TODO: test HTTP headers and GET params
 describe('Form', () => {
   let formData;
   const headers = {
+    'Content-Type': 'multipart/form-data',
     'Accept-Charset': 'Accept-Charset: utf-8',
     'Cache-Control': 'Cache-Control: no-cache',
   };
 
   let form;
+  window._vueFormPluginConfig = config.get({});
 
   beforeEach(() => {
     moxios.install();
@@ -114,25 +117,110 @@ describe('Form', () => {
     }
   });
 
-  it.only('can send post request', (done) => {
-    moxios.stubRequest('/users', {
-      status: 200,
-    });
+  it('can send get request', (done) => {
+    let userData = {
+      id: 1,
+      name: 'John Connor',
+      address: '321 Avenue',
+      city: 'Los Angeles',
+      state: 'CA',
+      age: 31,
+    };
 
+    moxiosStubRequest('/user', 200, userData);
+    form.get('/user');
 
-    moxios.wait((a, b, c, d) => {
-      //TODO: test
+    moxios.wait(() => {
+      for(let property in userData) {
+        expect(form[property]).toBe(userData[property]);
+      }
+
       done();
     });
 
-    form.post('/users');
   });
 
-  //TODO: get request
-  //TODO: post request
-  //TODO: PUT request
-  //TODO: PATCH request
-  //TODO: delete request
+  let moxiosStubRequest = (url, status, data) => {
+    moxios.stubRequest(url, {
+      status: status,
+      response: data
+    });
+  }
+
+  let testSendFailedRequestAndHandlerValidationErrors = (requestType, done) => {
+    let validationErrors = {
+      name: 'Error1',
+      address: 'Error2',
+      city: ['Error', 'Error3'],
+      state: 'error4',
+    }
+
+    expect(form.errors.any()).toBe(false);
+    moxiosStubRequest('/users', window._vueFormPluginConfig.validationErrorStatusCodes, validationErrors);
+
+    form[requestType]('/users').catch(() => {});
+    moxios.wait(() => {
+      for(let property in validationErrors) {
+        expect(form.errors.errors[property]).toEqual(validationErrors[property]);
+      }
+
+      done();
+    });
+  };
+
+  it('can send post request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('post', done);
+  });
+
+  it('can send put request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('put', done);
+  });
+
+  it('can send patch request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('patch', done);
+  });
+
+  it('can send delete request and handle validation errors', (done) => {
+    testSendFailedRequestAndHandlerValidationErrors('delete', done);
+  });
+
+  let testSendSuccessRequestAndClearErrors = (requestType, done) => {
+    let validationErrors = {
+      name: 'Error1',
+      address: 'Error2',
+      city: ['Error', 'Error3'],
+      state: 'error4',
+    }
+
+    form.errors.record(validationErrors);
+    expect(form.errors.any()).toBe(true);
+
+    moxiosStubRequest('/users', 200, {});
+
+    form[requestType]('/users').catch(() => {});
+    moxios.wait(() => {
+      expect(form.errors.any()).toBe(false);
+
+      done();
+    });
+  };
+
+  it('can send post request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('post', done);
+  });
+
+  it('can send put request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('put', done);
+  });
+
+  it('can send patch request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('patch', done);
+  });
+
+  it('can send delete request and clear errors', (done) => {
+    testSendSuccessRequestAndClearErrors('delete', done);
+  });
+
   //TODO: transformData
   //TODO: request
   //TODO: requestSuccessHandler ???
