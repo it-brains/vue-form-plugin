@@ -3,13 +3,7 @@ import Errors from '../src/Errors';
 import expect from 'expect';
 
 describe('Form', () => {
-  const formData = {
-    name: 'John Doe',
-    address: '123 Avenue',
-    city: 'New York',
-    state: 'NY',
-    age: 30,
-  };
+  let formData;
   const headers = {
     'Content-Type': 'multipart/form-data',
     'Accept-Charset': 'Accept-Charset: utf-8',
@@ -19,6 +13,14 @@ describe('Form', () => {
   let form;
 
   beforeEach(() => {
+    formData = {
+      name: 'John Doe',
+      address: '123 Avenue',
+      city: 'New York',
+      state: 'NY',
+      age: 30,
+    };
+
     form = new Form(formData, headers);
   });
 
@@ -55,9 +57,31 @@ describe('Form', () => {
     expect(form.data()).toEqual(formData);
   });
 
+  it('returns empty object if data was not passed trough constructor', () => {
+    let newForm = new Form();
+
+    expect(newForm.data()).toEqual({});
+  });
+
+  it('resets all instance properties passed via object through constructor and errors', () => {
+    expect(form.data()).toEqual(formData);
+
+    for(let property in formData) {
+      formData[property] = '';
+    }
+
+    form.errors.record({
+      field1: 'Error1',
+      field2: ['Error', 'Error2'],
+    });
+
+    form.reset();
+
+    expect(form.data()).toEqual(formData);
+    expect(form.errors.any()).toBe(false);
+  });
+
   //TODO: get request
-  //TODO: reset
-  //TODO: data
   //TODO: post request
   //TODO: PUT request
   //TODO: PATCH request
