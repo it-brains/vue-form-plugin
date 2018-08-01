@@ -65,10 +65,6 @@ describe('Form', () => {
     });
   });
 
-  it('returns data passed trough constructor', () => {
-    expect(form._data()).toEqual(formData);
-  });
-
   it('returns empty object if data was not passed trough constructor', () => {
     let newForm = new Form();
 
