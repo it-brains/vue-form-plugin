@@ -1,11 +1,12 @@
 import Form from '../src/Form';
 import Errors from '../src/Errors';
 import expect from 'expect';
+import moxios from 'moxios';
+import axios from 'axios';
 
 describe('Form', () => {
   let formData;
   const headers = {
-    'Content-Type': 'multipart/form-data',
     'Accept-Charset': 'Accept-Charset: utf-8',
     'Cache-Control': 'Cache-Control: no-cache',
   };
@@ -13,6 +14,8 @@ describe('Form', () => {
   let form;
 
   beforeEach(() => {
+    moxios.install();
+
     formData = {
       name: 'John Doe',
       address: '123 Avenue',
@@ -22,6 +25,10 @@ describe('Form', () => {
     };
 
     form = new Form(formData, headers);
+  });
+
+  afterEach(() => {
+    moxios.uninstall();
   });
 
   describe('Constructor', () => {
@@ -105,6 +112,20 @@ describe('Form', () => {
     for(let property in errors) {
       expect(form.errors.get(property)).toBe(errors[property]);
     }
+  });
+
+  it.only('can send post request', (done) => {
+    moxios.stubRequest('/users', {
+      status: 200,
+    });
+
+
+    moxios.wait((a, b, c, d) => {
+      //TODO: test
+      done();
+    });
+
+    form.post('/users');
   });
 
   //TODO: get request
