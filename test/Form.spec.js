@@ -3,8 +3,10 @@ import Errors from '../src/Errors';
 import expect from 'expect';
 import moxios from 'moxios';
 import config from '../src/config';
+import Vue from 'vue';
 
 //TODO: test HTTP headers and GET params
+//TODO: test calling callbacks
 describe('Form', () => {
   let formData;
   const headers = {
@@ -155,15 +157,18 @@ describe('Form', () => {
       state: 'error4',
     }
 
+    expect(form._processing).toBe(false);
     expect(form.errors.any()).toBe(false);
     moxiosStubRequest('/users', window._vueFormPluginConfig.validationErrorStatusCodes, validationErrors);
 
     form[requestType]('/users').catch(() => {});
+    expect(form._processing).toBe(true);
     moxios.wait(() => {
       for(let property in validationErrors) {
         expect(form.errors.errors[property]).toEqual(validationErrors[property]);
       }
 
+      expect(form._processing).toBe(false);
       done();
     });
   };
@@ -192,14 +197,17 @@ describe('Form', () => {
       state: 'error4',
     }
 
+    expect(form._processing).toBe(false);
     form.errors.record(validationErrors);
     expect(form.errors.any()).toBe(true);
 
     moxiosStubRequest('/users', 200, {});
 
     form[requestType]('/users').catch(() => {});
+    expect(form._processing).toBe(true);
     moxios.wait(() => {
       expect(form.errors.any()).toBe(false);
+      expect(form._processing).toBe(false);
 
       done();
     });
@@ -221,9 +229,51 @@ describe('Form', () => {
     testSendSuccessRequestAndClearErrors('delete', done);
   });
 
+  it('can set files property', () => {
+    expect(form.file).toBe(undefined);
+
+    const fileData = {size: 101020, field: '....'};
+    const eventObject = {
+      target: {
+        type: 'file',
+        multiple: false,
+        files: [fileData]
+      }
+    }
+
+    form.setFileField('file', eventObject);
+    expect(form.file).toEqual(fileData);
+  });
+
+  it('can set files property with multiple input', () => {
+    expect(form.files).toBe(undefined);
+
+    const filesData = [
+      {size: 101020, field: '....'},
+      {size: 101021, field: '........'}
+    ];
+    const eventObject = {
+      target: {
+        type: 'file',
+        multiple: true,
+        files: filesData
+      }
+    }
+
+    form.setFileField('files', eventObject);
+    expect(form.files).toEqual(filesData);
+  });
+
+  it('can clear files property', () => {
+    const fileData = {size: 101020, field: '....'};
+
+    Vue.set(form, 'file', fileData);
+    expect(form.file).toEqual(fileData);
+
+    form.setFileField('file', null, null);
+    expect(form.file).toEqual(null);
+  });
+
   //TODO: transformData
   //TODO: request
-  //TODO: requestSuccessHandler ???
-  //TODO: requestErrorHandler ???
-  //TODO: setFileField
 });
