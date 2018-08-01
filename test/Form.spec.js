@@ -51,6 +51,10 @@ describe('Form', () => {
     });
   });
 
+  it('returns data passed trough constructor', () => {
+    expect(form.data()).toEqual(formData);
+  });
+
   //TODO: get request
   //TODO: reset
   //TODO: data
@@ -58,5 +62,11 @@ describe('Form', () => {
   //TODO: PUT request
   //TODO: PATCH request
   //TODO: delete request
+  //TODO: transformData
+  //TODO: request
+  //TODO: requestSuccessHandler ???
+  //TODO: requestErrorHandler ???
   //TODO: setFileField
+  //TODO: onSuccess
+  //TODO: onFail
 });
