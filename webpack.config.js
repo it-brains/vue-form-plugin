@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 let config = {
   resolve: {
@@ -31,7 +32,8 @@ let config = {
         }
       }
     ]
-  }
+  },
+  plugins: [],
 };
 
 if (process.env.NODE_ENV === 'development') {
@@ -39,14 +41,25 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins = [
+  config.plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
         drop_console: false,
       }
     })
-  ];
+  );
+}
+
+if (process.env.NODE_ENV === 'server') {
+  config.devtool = 'source-map';
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      inject: true,
+      hash: true,
+      template: './demos/template.html',
+    }),
+  );
 }
 
 module.exports = config;
