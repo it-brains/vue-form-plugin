@@ -52,12 +52,20 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 if (process.env.NODE_ENV === 'server') {
+  config.entry = './demos/dev/src/index.js';
+  config.output.path = path.resolve(__dirname, "demos/dev/dist");
+
   config.devtool = 'source-map';
   config.plugins.push(
     new HtmlWebpackPlugin({
       inject: true,
       hash: true,
       template: './demos/template.html',
+      filename: 'index.html',
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+      }
     }),
   );
 }

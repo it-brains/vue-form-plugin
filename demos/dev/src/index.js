@@ -5,8 +5,8 @@ Vue.use(vueFormPlugin);
 
 import DevApp from './DevApp.vue';
 
-Vue.component('dev-app', DevApp);
+Vue.component('demo-app', DevApp);
 
 new Vue({
-  el: '#devApp',
+  el: '#demoApp',
 });
