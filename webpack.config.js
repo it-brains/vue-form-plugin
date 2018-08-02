@@ -1,13 +1,17 @@
 const webpack = require('webpack');
+const path = require('path');
 
-module.exports = {
+let config = {
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.js'
     }
   },
+  entry: "./src",
   output: {
+    path: path.resolve(__dirname, "dist"),
     libraryTarget: 'commonjs2',
+    filename: "index.js",
   },
   module: {
     rules: [
@@ -27,13 +31,22 @@ module.exports = {
         }
       }
     ]
-  },
-  plugins: [
+  }
+};
+
+if (process.env.NODE_ENV === 'development') {
+  config.devtool = 'source-map';
+}
+
+if (process.env.NODE_ENV === 'production') {
+  config.plugins = [
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
         drop_console: false,
       }
     })
-  ],
-};
+  ];
+}
+
+module.exports = config;
