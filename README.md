@@ -37,6 +37,7 @@ appropriate input, related with this error. Default value is `true`
 - `validationMessagesResponseKey` - key of validation messages in response object. Default is empty (uses root data object)
 - `validationErrorStatusCodes` - HTTP response codes of validation error. Can be scalar value (422, 500, etc) or array. 
 Default value is 422
+- `commonHttpHeaders` - HTTP headers which will be used with every request
 
 For using of the wrapper just create instance of `Form`(can be changed with `formClassName` option) class with needed fields:
 ```html
@@ -308,4 +309,22 @@ POST request:
 </script>
 ```
 ## Notes
-TODO
+If you use some kind of framework for your backend you may need to make some configuration things for using of this 
+plugin. 
+
+For example if you use Laravel PHP framework you probably will need to configure `validationMessagesResponseKey` and 
+most likely CSRF protection - `commonHttpHeaders`.
+
+It can look like this:
+```javascript
+import vueFormPlugin from 'vuejs-form-plugin';
+
+const pluginConfig = {
+  validationMessagesResponseKey: 'errors',
+  commonHttpHeaders: {
+    'X-CSRF-TOKEN': 'token_value',
+    'X-Requested-With': 'XMLHttpRequest',
+  }
+};
+Vue.use(vueFormPlugin, pluginConfig);
+```
