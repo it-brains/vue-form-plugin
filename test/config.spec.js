@@ -9,6 +9,7 @@ describe('config', () => {
     clearValidationMessageWithInputChange: true,
     validationMessagesResponseKey: '',
     validationErrorStatusCodes: 422,
+    commonHttpHeaders: {}
   };
 
   it('returns correct default values', () => {

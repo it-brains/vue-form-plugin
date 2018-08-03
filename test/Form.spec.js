@@ -16,7 +16,7 @@ describe('Form', () => {
   };
 
   let form;
-  window._vueFormPluginConfig = config.get({});
+  global._vueFormPluginConfig = config.get({});
 
   beforeEach(() => {
     moxios.install();
@@ -129,7 +129,7 @@ describe('Form', () => {
 
     expect(form._processing).toBe(false);
     expect(form.errors.any()).toBe(false);
-    moxiosStubRequest('/users', window._vueFormPluginConfig.validationErrorStatusCodes, validationErrors);
+    moxiosStubRequest('/users', _vueFormPluginConfig.validationErrorStatusCodes, validationErrors);
 
     form[requestType]('/users').catch(() => {});
     expect(form._processing).toBe(true);
