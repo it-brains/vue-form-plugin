@@ -188,7 +188,7 @@ export default class Form {
    * @param {object} response
    */
   _requestSuccessHandler(resolve, response) {
-    this._onSuccess(response.data);
+    this.errors.clear();
 
     resolve(response.data);
     this._processing = false;
@@ -210,7 +210,7 @@ export default class Form {
     if(validationErrorCodes.indexOf(response.status) !== -1) {
       let errors = errorsKey ? response.data[errorsKey] : response.data;
 
-      this._onFail(errors);
+      this.errors._record(errors);
     }
 
     reject(response);
@@ -247,19 +247,5 @@ export default class Form {
     if (callback) {
       callback(field, event);
     }
-  }
-
-  /**
-   * Success callback
-   */
-  _onSuccess() {
-    this.errors.clear();
-  }
-
-  /**
-   * Error callback
-   */
-  _onFail(errors) {
-    this.errors._record(errors);
   }
 }

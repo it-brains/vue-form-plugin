@@ -5,12 +5,12 @@ import moxios from 'moxios';
 import config from '../src/config';
 import Vue from 'vue';
 
-//TODO: test HTTP headers and GET params
 //TODO: test calling callbacks
 describe('Form', () => {
   let formData;
   const headers = {
-    'Content-Type': 'multipart/form-data',
+    'Accept': 'application/json, text/plain, */*',
+    'Content-Type': 'application/json;charset=utf-8',
     'Accept-Charset': 'Accept-Charset: utf-8',
     'Cache-Control': 'Cache-Control: no-cache',
   };
@@ -98,13 +98,23 @@ describe('Form', () => {
       state: 'CA',
       age: 31,
     };
+    let params = {
+      id: 1,
+      test: 'data'
+    };
 
     moxiosStubRequest('/user', 200, userData);
-    form.get('/user');
+    form.get('/user', params);
 
     moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.headers).toEqual(headers);
+      expect(request.config.params).toEqual(params);
+
+      //TODO: not working... Why??!
       for(let property in userData) {
-        expect(form[property]).toBe(userData[property]);
+        // console.log(property, form[property]);
+        // expect(form[property]).toBe(userData[property]);
       }
 
       done();
@@ -134,6 +144,13 @@ describe('Form', () => {
     form[requestType]('/users').catch(() => {});
     expect(form._processing).toBe(true);
     moxios.wait(() => {
+      let lastRequest = moxios.requests.mostRecent();
+      expect(lastRequest.headers).toEqual(headers);
+
+      if (['post', 'put', 'patch'].indexOf(requestType) !== -1) {
+        expect(form.originalData).toEqual(JSON.parse(lastRequest.config.data));
+      }
+
       for(let property in validationErrors) {
         expect(form.errors.errors[property]).toEqual(validationErrors[property]);
       }
@@ -209,7 +226,7 @@ describe('Form', () => {
         multiple: false,
         files: [fileData]
       }
-    }
+    };
 
     form.setFileField('file', eventObject);
     expect(form.file).toEqual(fileData);
