@@ -28,6 +28,11 @@ const config = {
    * HTTP response codes of validation error
    */
   validationErrorStatusCodes: 422,
+
+  /**
+   * HTTP headers which will be used with every request
+   */
+  commonHttpHeaders: { },
 };
 
 

@@ -1,5 +1,7 @@
 <template>
-  <span class="help is-danger" v-if="allErrors && allErrors.has(propertyName)" v-text="allErrors.get(propertyName)"></span>
+  <div>
+    <span class="help is-danger" v-if="allErrors && allErrors.has(propertyName)" v-text="allErrors.get(propertyName)"></span>
+  </div>
 </template>
 
 <script>

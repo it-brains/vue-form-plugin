@@ -1,7 +1,14 @@
 import Vue from 'vue';
 import vueFormPlugin from './../../../src';
 
-Vue.use(vueFormPlugin);
+const pluginConfig = {
+  validationMessagesResponseKey: 'errors',
+  commonHttpHeaders: {
+    'X-CSRF-TOKEN': 'token_value',
+    'X-Requested-With': 'XMLHttpRequest',
+  }
+};
+Vue.use(vueFormPlugin, pluginConfig);
 
 import DevApp from './DevApp.vue';
 
