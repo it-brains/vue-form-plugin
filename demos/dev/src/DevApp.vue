@@ -10,7 +10,7 @@
       <input v-model="form.last_name" id="last_name" name="last_name">
       <validation-message property-name="last_name"></validation-message>
     </div>
-    <button @click.prevent="save">Save</button>
+    <button @click.prevent="save" id="submitBtn">Save</button>
   </form>
 </template>
 
