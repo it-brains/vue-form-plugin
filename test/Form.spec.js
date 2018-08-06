@@ -165,7 +165,7 @@ describe('Form', () => {
     });
     let transformers = {
       numbers: {
-        func: (item) => {
+        func(item) {
           return item * 2;
         },
       },

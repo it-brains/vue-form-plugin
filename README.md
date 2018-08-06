@@ -6,8 +6,9 @@ This is a simple wrapper for HTTP requests.
 2. [Basic usage](#basic-usage)
 3. [Form class](#form-class)
 4. [Working with files](#working-with-files)
-5. [Examples](#examples)
-6. [Notes](#notes)
+5. [Transformers](#transformers)
+6. [Examples](#examples)
+7. [Notes](#notes)
 
 
 ## Installation
@@ -130,7 +131,7 @@ Constructor of the class takes two arguments:
 - `headers` - optional. JS object with HTTP headers which will be passed with every HTTP request
 
 Form class ships with the following methods:
-- `get(url[, params, headers, successCallback, errorCallback])` - makes GET request to the server. Return current 
+- `get(url[, params, transformers, headers, successCallback, errorCallback])` - makes GET request to the server. Return current 
 instance of the class
 - `post(url[, headers])` - makes POST request to the server. Returns promise
 - `put(url[, headers])` - makes PUT request to the server. Returns promise
@@ -143,6 +144,7 @@ in [Working with files](#working-with-files) section.
 Params:
 - `url` - string with URL address for the request
 - `params` - optional. JS object with GET params for the requests
+- `transformers` - optional. JS object with transformers. Read about it in [transformers](#transformers) section
 - `headers` - optional. JS object with HTTP headers which will be passed with current request. If this object has the 
 same HTTP headers as headers which were passed with constructor of the class, constructor's headers will be overridden
 - `successCallback` - optional. Callback function which will be called after success request
@@ -224,6 +226,44 @@ event handler will be called with field name as the first parameter and `$event`
 3. After successfully request we use `setFileField` method for cleaning of file field. For this we pass field name 
 (`photo` in this case) `null` as event object and `null` as `value`.
 
+## Transformers
+Sometimes you may need to transform retrieved via 'GET' method data. For simplify this job you can use `transformers`.
+
+Transformers - it is simply JS object which you can pass as third(optional) parameter of `get` method.
+The keys of this object are the keys of retrieved from the server object of data. Let's see on the example of object of 
+transformers:
+```javascript
+let transformers = {
+  clients: {
+    field: 'client_ids',
+    property: 'id'
+  },
+  numbers: {
+    func(item) {
+      return item * 2;
+    }
+  }
+};
+```
+In this case `client_ids` field will be added to your form instance. This field will be based on the 'clients' field of 
+object retrieved from the server. `client_ids` field will contain array of IDs(property: 'id') of clients returned 
+from the server - if server returned `clients` as array. If `clients` - it is simple object, `client_ids` will contain 
+scalar value of 'id'.
+`numbers` field of form instance will be replaced with new numbers field which will be got as result of function `func` 
+for every element of `numbers` array(if it is array).
+
+Common description of the using of transformers:
+- transformers - it is simple JS object
+- the keys of transformers object are the keys of object retrieved from the server
+- each nested object of transformers object describes getting of resulted 'transformed' value
+- each nested object of transformers object can contain the following fields: `field`, `property`, `func`
+- `field` - determines the property name of form instance which will contain 'transformed' value. `field` property isn't 
+required. If you don't pass this field, instead key of current nested transform object will be used
+- `property` - determines the property of retrieved object which will be used as 'transformed' value. This field isn't 
+required. Instead you can use conversion function passed in `func` property
+- `func` - determines conversion function into which will be passed retrieved object. The result of this function will 
+be used as 'transformed' value
+- if you don't specify neither `property` nor `func` values, 'transformed' value won't be get
 
 ## Examples
 GET request:
