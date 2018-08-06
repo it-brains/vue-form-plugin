@@ -138,6 +138,7 @@ instance of the class
 - `delete(url[, headers])` - makes DELETE request to the server. Returns promise
 - `setFileField(field[, event, value, callback])` - sets files property of form. See detailed description 
 in [Working with files](#working-with-files) section.
+- `reset` - clears all fields passed through constructor. It can clear nested fields(at the first nesting level) as well.
 
 Params:
 - `url` - string with URL address for the request
