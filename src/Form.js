@@ -26,14 +26,14 @@ export default class Form {
    * Make GET request
    *
    * @param {string} url
-   * @param {string} transformers
    * @param {string} params
+   * @param {string} transformers
    * @param {string} headers
    * @param {function} successCallback
    * @param {function} errorCallback
    * @returns {Form}
    */
-  get(url, transformers = {}, params = {}, headers = {}, successCallback = null, errorCallback = null) {
+  get(url, params = {}, transformers = {}, headers = {}, successCallback = null, errorCallback = null) {
     this._request('get', url, {params, headers}).then(data => {
       for (let field in data) {
         this[field] = data[field];
