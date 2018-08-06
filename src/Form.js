@@ -39,7 +39,7 @@ export default class Form {
         this[field] = data[field];
       }
 
-      this.applyTransformers(transformers, data);
+      this._applyTransformers(transformers, data);
 
       if (successCallback) {
         successCallback(data);
@@ -58,7 +58,7 @@ export default class Form {
    * @param {object} transformers
    * @param {object} data
    */
-  applyTransformers(transformers, data) {
+  _applyTransformers(transformers, data) {
     for (let prop in transformers) {
       if (!data.hasOwnProperty(prop)) {
         continue;
