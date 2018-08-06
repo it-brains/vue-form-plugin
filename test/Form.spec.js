@@ -75,7 +75,7 @@ describe('Form', () => {
     expect(form._data()).toEqual(formData);
 
     for(let property in formData) {
-      formData[property] = '';
+      formData[property] = null;
     }
 
     form.errors._record({
@@ -87,6 +87,31 @@ describe('Form', () => {
 
     expect(form._data()).toEqual(formData);
     expect(form.errors.any()).toBe(false);
+  });
+
+  it('can clear nested fields of form instance', () => {
+    let fields = {
+      name: 'Test',
+      age: 30,
+      parent: {
+        name: 'test2',
+        age: 50
+      },
+      children: ['test', 'test2'],
+    };
+    let emptyFields = {
+      name: null,
+      age: null,
+      parent: {
+        name: null,
+        age: null
+      },
+      children: [],
+    };
+
+    let form = new Form(fields);
+    form.reset();
+    expect(form._data()).toEqual(emptyFields);
   });
 
   it('can send get request', (done) => {
@@ -127,7 +152,7 @@ describe('Form', () => {
       status: status,
       response: data
     });
-  }
+  };
 
   let testSendFailedRequestAndHandlerValidationErrors = (requestType, done) => {
     let validationErrors = {
