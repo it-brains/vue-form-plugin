@@ -292,7 +292,7 @@ GET request:
         form: new Form({
           f_name: '',
           l_name: '',
-        }).get('user', {id: 1}, this.successCallback),
+        }).get('user', {id: 1}, {}, {} this.successCallback),
       }
     },
     methods: {
