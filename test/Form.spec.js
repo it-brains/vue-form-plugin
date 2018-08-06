@@ -144,7 +144,51 @@ describe('Form', () => {
 
       done();
     });
+  });
 
+  it('can apply transformers for GET method', (done) => {
+    let data = {
+      name: 'Test',
+      age: 30,
+      numbers: [1, 2, 3, 4],
+      agents: [{name: 'test2', id: 42}, {name: 'test54', id: 54}],
+      doctor: {id: 1, name: 'John'},
+    }
+
+
+    let form = new Form({
+      name: '',
+      age: null,
+      numbers: [],
+      agents: [],
+      doctor: null,
+    });
+    let transformers = {
+      numbers: {
+        func: (item) => {
+          return item * 2;
+        },
+      },
+      agents: {
+        field: 'agent_ids',
+        property: 'id',
+      },
+      doctor: {
+        property: 'name',
+      },
+    };
+
+    moxiosStubRequest('/user', 200, data);
+    form.get('/user', {}, transformers);
+    moxios.wait(() => {
+      expect(form.name).toBe('Test');
+      expect(form.age).toBe(30);
+      expect(form.numbers).toEqual([2, 4, 6, 8]);
+      expect(form.agent_ids).toEqual([42, 54]);
+      expect(form.doctor).toBe('John');
+
+      done();
+    });
   });
 
   let moxiosStubRequest = (url, status, data) => {
