@@ -39,6 +39,8 @@ appropriate input, related with this error. Default value is `true`
 - `validationErrorStatusCodes` - HTTP response codes of validation error. Can be scalar value (422, 500, etc) or array. 
 Default value is 422
 - `commonHttpHeaders` - HTTP headers which will be used with every request
+- `errorHandlers` - function or array of functions which will be called after failed request with response object as 
+parameter
 
 For using of the wrapper just create instance of `Form`(can be changed with `formClassName` option) class with needed fields:
 ```html
