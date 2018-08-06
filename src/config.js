@@ -33,6 +33,11 @@ const config = {
    * HTTP headers which will be used with every request
    */
   commonHttpHeaders: { },
+
+  /**
+   * Functions which will be called after failed request
+   */
+  errorHandlers: [],
 };
 
 
