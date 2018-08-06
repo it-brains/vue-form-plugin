@@ -27,7 +27,7 @@ describe('config', () => {
       clearValidationMessageWithInputChange: false,
       validationMessagesResponseKey: 'errors',
       validationErrorStatusCodes: [500, 422],
-    }
+    };
 
     expect(config.get(customConfig)).toEqual({
       ...defaultValues,

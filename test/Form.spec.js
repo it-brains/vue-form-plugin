@@ -153,7 +153,7 @@ describe('Form', () => {
       numbers: [1, 2, 3, 4],
       agents: [{name: 'test2', id: 42}, {name: 'test54', id: 54}],
       doctor: {id: 1, name: 'John'},
-    }
+    };
 
 
     let form = new Form({
@@ -204,7 +204,7 @@ describe('Form', () => {
       address: 'Error2',
       city: ['Error', 'Error3'],
       state: 'error4',
-    }
+    };
 
     expect(form._processing).toBe(false);
     expect(form.errors.any()).toBe(false);
@@ -251,7 +251,7 @@ describe('Form', () => {
       address: 'Error2',
       city: ['Error', 'Error3'],
       state: 'error4',
-    }
+    };
 
     expect(form._processing).toBe(false);
     form.errors._record(validationErrors);
@@ -314,7 +314,7 @@ describe('Form', () => {
         multiple: true,
         files: filesData
       }
-    }
+    };
 
     form.setFileField('files', eventObject);
     expect(form.files).toEqual(filesData);
