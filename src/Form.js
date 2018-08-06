@@ -55,7 +55,21 @@ export default class Form {
    */
   reset() {
     for (let field in this.originalData) {
-      this[field] = '';
+      if (Array.isArray(this[field])) {
+        this[field] = [];
+
+        continue;
+      }
+
+      if ((typeof this[field]) === 'object') {
+        for(let property in this[field]) {
+          this[field][property] = null;
+        }
+
+        continue;
+      }
+
+      this[field] = null;
     }
 
     this.errors.clear();
