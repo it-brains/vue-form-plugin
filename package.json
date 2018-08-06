@@ -29,6 +29,7 @@
     "production": "NODE_ENV=production webpack --config=webpack.config.js",
     "dev": "npm run development",
     "development": "NODE_ENV=development webpack --config=webpack.config.js",
+    "watch": "NODE_ENV=development webpack --config=webpack.config.js --watch",
     "test": "NODE_ENV=testing mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/*.spec.js",
     "test-watch": "NODE_ENV=testing mocha-webpack --webpack-config webpack.config.js --require test/setup.js --watch test/*.spec.js",
     "server": "NODE_ENV=server webpack-dev-server --config=webpack.config.js"

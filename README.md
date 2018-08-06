@@ -266,33 +266,58 @@ be used as 'transformed' value
 - if you don't specify neither `property` nor `func` values, 'transformed' value won't be get
 
 ## Examples
-GET request:
+GET request(with transformers):
 ```html
 <template>
-  <div v-form="form">
-    <div v-show="form._processing">Processing...</div>
+  <form v-form="form">
     <div>
-      <label>First name:</label>
-      <input v-model="form.f_name" name="f_name">
-      <validation-message property-name="f_name"></validation-message>
+      <label>Name</label>
+      <input v-model="form.name" id="name" name="name">
+      <validation-message property-name="name"></validation-message>
     </div>
-
     <div>
-      <label>Last name:</label>
-      <input v-model="form.l_name" name="l_name">
-      <validation-message property-name="l_name"></validation-message>
+      <label>Parent name</label>
+      <input v-model="form.parent.name" id="parent_name" name="parent_name">
+      <validation-message property-name="parent_name"></validation-message>
     </div>
-  </div>
+    <div>
+      <label>Agent</label>
+      <select v-model="form.agent_ids" multiple id="agent_ids" name="agent_ids">
+        <option value="1">Agent1</option>
+        <option value="2">Agent2</option>
+        <option value="3">Agent3</option>
+      </select>
+      <validation-message property-name="agent_ids"></validation-message>
+    </div>
+  </form>
 </template>
 
 <script>
+  const transformers = {
+    agents: {
+      field: 'agent_ids',
+      property: 'id',
+    },
+    parent: {
+      func(item) {
+        item.name = item.full_name;
+
+        return item;
+      },
+    }
+  };
+
   export default {
     data() {
       return {
         form: new Form({
-          f_name: '',
-          l_name: '',
-        }).get('user', {id: 1}, {}, {} this.successCallback),
+          name: null,
+          parent: {
+            name: null,
+            age: null,
+          },
+          agent_ids: []
+        }).get('/user', {}, transformers, {}, this.successCallback)
       }
     },
     methods: {
