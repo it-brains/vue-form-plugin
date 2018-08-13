@@ -130,6 +130,7 @@ The title of the class can be overridden with `formClassName` option of the plug
 
 Constructor of the class takes two arguments:
 - `data` - JS object with needed fields
+- `exceptionParams` - array of fields which should be excluded from requests
 - `headers` - optional. JS object with HTTP headers which will be passed with every HTTP request
 
 Form class ships with the following methods:
