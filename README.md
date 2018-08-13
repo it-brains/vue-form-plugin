@@ -139,14 +139,14 @@ instance of the class
 - `post(url[, headers])` - makes POST request to the server. Returns promise
 - `put(url[, headers])` - makes PUT request to the server. Returns promise
 - `patch(url[, headers])` - makes PATCH request to the server. Returns promise
-- `delete(url[, headers])` - makes DELETE request to the server. Returns promise
+- `delete(url[, params, headers])` - makes DELETE request to the server. Returns promise
 - `setFileField(field[, event, value, callback])` - sets files property of form. See detailed description 
 in [Working with files](#working-with-files) section.
 - `reset()` - clears all fields passed through constructor. It can clear nested fields(at the first nesting level) as well.
 
 Params:
 - `url` - string with URL address for the request
-- `params` - optional. JS object with GET params for the requests
+- `params` - optional. JS object with params for GET and DELETE requests
 - `transformers` - optional. JS object with transformers. Read about it in [transformers](#transformers) section
 - `headers` - optional. JS object with HTTP headers which will be passed with current request. If this object has the 
 same HTTP headers as headers which were passed with constructor of the class, constructor's headers will be overridden
