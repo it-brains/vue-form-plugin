@@ -329,4 +329,37 @@ describe('Form', () => {
     form.setFileField('file', null, null);
     expect(form.file).toEqual(null);
   });
+
+  it('can except fields passed through constructor from request', (done) => {
+    let requestData = {
+      ...formData,
+      exceptField1: ['test1', 'test2'],
+      exceptField2: 'test',
+    };
+    let exceptFields = ['exceptField1', 'exceptField2'];
+    let expectRequestData = {...requestData};
+
+    exceptFields.forEach(field => {
+      delete expectRequestData[field];
+    });
+
+    form = new Form(requestData, exceptFields);
+
+    moxiosStubRequest('/user', 200, {});
+    let requests = ['post', 'patch', 'put'];
+    requests.forEach((type, index) => {
+      form[type]('/user');
+
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent();
+        let requestData = JSON.parse(request.config.data);
+
+        expect(requestData).toEqual(expectRequestData);
+
+        if ((index + 1) == requests.length) {
+          done();
+        }
+      });
+    });
+  })
 });
