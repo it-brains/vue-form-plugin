@@ -36,6 +36,8 @@ export default class Form {
    * @returns {Form}
    */
   get(url, params = {}, transformers = {}, headers = {}, successCallback = null, errorCallback = null) {
+    this._filterNeededParams(params);
+
     this._request('get', url, {params, headers}).then(data => {
       for (let field in data) {
         this[field] = data[field];
@@ -53,6 +55,19 @@ export default class Form {
     });
 
     return this;
+  }
+
+  /**
+   *
+   * @param {object} params
+   * @private
+   */
+  _filterNeededParams(params) {
+    this._exceptionParams.forEach(param => {
+      if (params.hasOwnProperty(param)) {
+        delete params[param];
+      }
+    });
   }
 
   /**
@@ -172,6 +187,8 @@ export default class Form {
    * @returns {Promise<any>}
    */
   delete(url, params = {}, headers = {}) {
+    this._filterNeededParams(params);
+
     return this._request('delete', url, {headers, params});
   }
 

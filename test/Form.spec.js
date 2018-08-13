@@ -335,7 +335,7 @@ describe('Form', () => {
     expect(form.file).toEqual(null);
   });
 
-  it('can except fields passed through constructor from post, put and patch request', (done) => {
+  it('can except fields passed through constructor from post, put and patch requests', (done) => {
     let requestData = {
       ...formData,
       exceptField1: ['test1', 'test2'],
@@ -358,6 +358,39 @@ describe('Form', () => {
       moxios.wait(() => {
         let request = moxios.requests.mostRecent();
         let requestData = JSON.parse(request.config.data);
+
+        expect(requestData).toEqual(expectRequestData);
+
+        if ((index + 1) == requests.length) {
+          done();
+        }
+      });
+    });
+  });
+
+  it('can except fields passed through constructor from get and delete requests', (done) => {
+    let requestData = {
+      ...formData,
+      exceptField1: ['test1', 'test2'],
+      exceptField2: 'test',
+    };
+    let exceptFields = ['exceptField1', 'exceptField2'];
+    let expectRequestData = {...requestData};
+
+    exceptFields.forEach(field => {
+      delete expectRequestData[field];
+    });
+
+    form = new Form(requestData, exceptFields);
+
+    moxiosStubRequest('/user', 200, {});
+    let requests = ['get', 'delete'];
+    requests.forEach((type, index) => {
+      form[type]('/user', requestData);
+
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent();
+        let requestData = request.config.params;
 
         expect(requestData).toEqual(expectRequestData);
 
