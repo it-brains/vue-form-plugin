@@ -114,7 +114,7 @@ describe('Form', () => {
     expect(form._data()).toEqual(emptyFields);
   });
 
-  it('can send get request', (done) => {
+  it('can send GET and DELETE request with params', (done) => {
     let userData = {
       id: 1,
       name: 'John Connor',
@@ -129,20 +129,25 @@ describe('Form', () => {
     };
 
     moxiosStubRequest('/user', 200, userData);
-    form.get('/user', params);
+    let requests = ['get', 'delete'];
+    requests.forEach((request, index) => {
+      form[request]('/user', params);
 
-    moxios.wait(() => {
-      let request = moxios.requests.mostRecent();
-      expect(request.headers).toEqual(headers);
-      expect(request.config.params).toEqual(params);
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent();
+        expect(request.headers).toEqual(headers);
+        expect(request.config.params).toEqual(params);
 
-      //TODO: not working... Why??!
-      for(let property in userData) {
-        // console.log(property, form[property]);
-        // expect(form[property]).toBe(userData[property]);
-      }
+        //TODO: not working... Why??!
+        for(let property in userData) {
+          // console.log(property, form[property]);
+          // expect(form[property]).toBe(userData[property]);
+        }
 
-      done();
+        if ((index + 1) == requests.length) {
+          done();
+        }
+      });
     });
   });
 
