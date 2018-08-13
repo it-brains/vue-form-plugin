@@ -7,11 +7,13 @@ export default class Form {
   /**
    * Class constructor
    *
-   * @param {object} data
-   * @param {object} headers
+   * @param data
+   * @param exceptionParams
+   * @param headers
    */
-  constructor(data, headers = {}) {
+  constructor(data, exceptionParams = [], headers = {}) {
     this.originalData = data;
+    this._exceptionParams = exceptionParams;
 
     for (let field in data) {
       this[field] = data[field];
@@ -118,6 +120,10 @@ export default class Form {
     let data = {};
 
     for (let property in this.originalData) {
+      if(this._exceptionParams.find(exceptionParam => exceptionParam === property)) {
+        continue;
+      }
+
       data[property] = this[property];
     }
 
