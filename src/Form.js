@@ -164,14 +164,15 @@ export default class Form {
   }
 
   /**
-   * Make DELETE request
+   *  Make DELETE request
    *
-   * @param {string} url
-   * @param {object} headers
+   * @param url
+   * @param params
+   * @param headers
    * @returns {Promise<any>}
    */
-  delete(url, headers = {}) {
-    return this._request('delete', url, {headers});
+  delete(url, params = {}, headers = {}) {
+    return this._request('delete', url, {headers, params});
   }
 
   /**

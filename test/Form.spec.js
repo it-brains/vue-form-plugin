@@ -330,7 +330,7 @@ describe('Form', () => {
     expect(form.file).toEqual(null);
   });
 
-  it('can except fields passed through constructor from request', (done) => {
+  it('can except fields passed through constructor from post, put and patch request', (done) => {
     let requestData = {
       ...formData,
       exceptField1: ['test1', 'test2'],
