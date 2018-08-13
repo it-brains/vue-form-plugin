@@ -29,7 +29,7 @@ describe('Form', () => {
       age: 30,
     };
 
-    form = new Form(formData, headers);
+    form = new Form(formData, [], headers);
   });
 
   afterEach(() => {
