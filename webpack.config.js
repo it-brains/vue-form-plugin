@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 let config = {
   resolve: {
@@ -30,10 +32,19 @@ let config = {
         use: {
           loader: 'babel-loader',
         }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ]
       }
     ]
   },
-  plugins: [],
+  plugins: [
+    new VueLoaderPlugin()
+  ],
 };
 
 if (process.env.NODE_ENV === 'development') {
@@ -41,14 +52,17 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: false,
-      }
-    })
-  );
+  config.optimization = {
+    minimizer: [
+      new UglifyJsPlugin({
+        parallel: true,
+        uglifyOptions: {
+          warnings: false,
+          output: null,
+        },
+      })
+    ],
+  };
 }
 
 if (process.env.NODE_ENV === 'server') {
