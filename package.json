@@ -1,6 +1,6 @@
 {
   "name": "vuejs-form-plugin",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Simple wrapper for HTTP requests",
   "main": "dist/index.js",
   "devDependencies": {
