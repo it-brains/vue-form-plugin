@@ -143,6 +143,7 @@ instance of the class
 - `setFileField(field[, event, value, callback])` - sets files property of form. See detailed description 
 in [Working with files](#working-with-files) section.
 - `reset()` - clears all fields passed through constructor. It can clear nested fields(at the first nesting level) as well.
+- `useCustomAxios(axiosInstance)` - use given axios instance for requests.
 
 Params:
 - `url` - string with URL address for the request

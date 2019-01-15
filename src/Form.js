@@ -12,6 +12,7 @@ export default class Form {
    * @param headers
    */
   constructor(data, exceptionParams = [], headers = {}) {
+    this._axios = axios;
     this.originalData = data;
     this._exceptionParams = exceptionParams;
 
@@ -249,7 +250,7 @@ export default class Form {
 
     this._processing = true;
     return new Promise((resolve, reject) => {
-      axios[requestType](...requestData)
+      this._axios[requestType](...requestData)
         .then(this._requestSuccessHandler.bind(this, resolve))
         .catch(this._requestErrorHandler.bind(this, reject));
     });
@@ -324,5 +325,17 @@ export default class Form {
     if (callback) {
       callback(field, event);
     }
+  }
+
+  /**
+   * Use custom axios instance
+   *
+   * @param {object} axiosInstance
+   * @returns {Form}
+   */
+  useCustomAxios(axiosInstance) {
+    this._axios = axiosInstance;
+
+    return this;
   }
 }
