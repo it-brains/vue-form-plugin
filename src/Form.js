@@ -2,6 +2,8 @@ import Errors from './Errors';
 import axios from 'axios';
 import Vue from 'vue';
 
+Vue.config.productionTip = false;
+
 export default class Form {
 
   /**
